@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>voziLog – Upravljanje vozilima</title>
+  <meta name="description" content="voziLog je Android aplikacija za upravljanje vozilima – praćenje vožnji, goriva, servisa i parking zona u Srbiji.">
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3a;
+      --accent: #4f8ef7;
+      --accent2: #7c3aed;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Georgia', serif;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      font-family: 'Courier New', monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'Courier New', monospace;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 6rem 1.5rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(79,142,247,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(79,142,247,0.1);
+      border: 1px solid rgba(79,142,247,0.3);
+      color: var(--accent);
+      font-size: 0.78rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 .accent { color: var(--accent); }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: white;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: 'Courier New', monospace;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .hero-cta:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .hero-cta.secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      margin-left: 0.8rem;
+    }
+
+    .hero-cta.secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* FEATURES */
+    .features {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+
+    .section-label {
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin-bottom: 3rem;
+      color: var(--text);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(79,142,247,0.4);
+    }
+
+    .feature-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      font-family: 'Courier New', monospace;
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* DIVIDER */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ABOUT */
+    .about {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+
+    .about p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: var(--accent); }
+
+    footer .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">vozi<span>Log</span></a>
+  <a href="privacy-policy.html">Politika privatnosti</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">Android aplikacija · Srbija</div>
+  <h1>Tvoje vozilo.<br><span class="accent">Pod kontrolom.</span></h1>
+  <p>voziLog je aplikacija za praćenje vožnji, goriva, servisa i parking zona — sve na jednom mestu, za svako vozilo koje vozite.</p>
+  <a href="https://play.google.com/store/apps/details?id=com.codevito.vozilog" class="hero-cta">
+    ↓ Preuzmi na Google Play
+  </a>
+  <a href="privacy-policy.html" class="hero-cta secondary">
+    Politika privatnosti
+  </a>
+</section>
+
+<section class="features">
+  <div class="section-label">Funkcionalnosti</div>
+  <div class="section-title">Šta pruža voziLog</div>
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <div class="feature-icon">🚗</div>
+      <h3>Praćenje vožnji</h3>
+      <p>Beležite svaku vožnju — kilometražu, rutu, vreme polaska i dolaska. Pregled istorije vožnji uvek pri ruci.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">⛽</div>
+      <h3>Evidencija goriva</h3>
+      <p>Pratite potrošnju goriva, cene i ukupne troškove. Uvek znate koliko vas košta kilometar.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔧</div>
+      <h3>Servisna knjižica</h3>
+      <p>Digitalna servisna knjižica za svako vozilo. Sve intervencije, datumi i troškovi na jednom mestu.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🅿️</div>
+      <h3>SMS Parking</h3>
+      <p>Brzo slanje SMS poruka za plaćanje parkinga u 75+ gradova Srbije. Podrška za više zona i tajmer isteka.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔔</div>
+      <h3>Podsetnici</h3>
+      <p>Nikad više ne propustite tehnički pregled, registraciju ili servisni interval. Pravovremena obaveštenja.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">☁️</div>
+      <h3>Google Drive backup</h3>
+      <p>Opcioni bekap svih podataka na vaš Google Drive nalog. Vaši podaci, vaša kontrola.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="about">
+  <div class="section-label">O aplikaciji</div>
+  <div class="section-title">Napravljeno za Srbiju</div>
+  <p>voziLog je nastao kao odgovor na svakodnevne potrebe vozača u Srbiji — od praćenja troškova do brzog plaćanja parkinga u bilo kom gradu.</p>
+  <p>Aplikacija je dostupna na Google Play Store platformi. Podaci se čuvaju lokalno na uređaju i opciono na vašem Google Drive nalogu.</p>
+  <p style="margin-top: 1.5rem;">
+    <a href="privacy-policy.html" style="color: var(--accent); text-decoration: none;">→ Pročitajte politiku privatnosti</a>
+  </p>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="privacy-policy.html">Politika privatnosti / Privacy Policy</a>
+    <a href="mailto:codeinvito@gmail.com">codeinvito@gmail.com</a>
+  </div>
+  voziLog &copy; 2026 · CodeVito
+</footer>
+
+</body>
+</html>
